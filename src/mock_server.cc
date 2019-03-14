@@ -217,17 +217,10 @@ int MockServer::Server::handlerCallback(
     std::vector<Header> headersReceived = getConnectionArgs<Header>(connection);
     std::vector<UrlArg> urlArguments = getConnectionArgs<UrlArg>(connection);
     // invoke the MockServer::responseHandler() callback
-    Response mockResponse = mock.responseHandler(
-            url, method, receivedData, urlArguments, headersReceived);
-    // prepare server response
-    struct MHD_Response *response = MHD_create_response_from_buffer(
-            mockResponse.body.size(), (void*) mockResponse.body.data(),
-            MHD_RESPMEM_MUST_COPY);
-    // set headers response requested to do so
-    for (const Header &header: mockResponse.headers) {
-        MHD_add_response_header(response, header.key.c_str(), header.value.c_str());
-    }
-    int ret = MHD_queue_response(connection, mockResponse.status, response);
+    int status;
+    struct MHD_Response *response = mock.responseHandlerCallback(
+            url, method, receivedData, urlArguments, headersReceived, status);
+    int ret = MHD_queue_response(connection, status, response);
     MHD_destroy_response(response);
     return ret;
 }

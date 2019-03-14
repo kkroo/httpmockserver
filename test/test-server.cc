@@ -48,6 +48,30 @@ class Mock: public httpmock::MockServer {
         return Response(404, "Page not found.");
     }
 
+
+    virtual struct MHD_Response * responseHandlerCallback(
+            const std::string &url,
+            const std::string &method,
+            const std::string &receivedData,
+            const std::vector<UrlArg> &urlArguments,
+            const std::vector<Header> &headersReceived,
+            int &status)
+    {
+        Response mockResponse = responseHandler(
+                url, method, receivedData, urlArguments, headersReceived);
+        // prepare server response
+        struct MHD_Response *response = MHD_create_response_from_buffer(
+                mockResponse.body.size(), (void*) mockResponse.body.data(),
+                MHD_RESPMEM_MUST_COPY);
+        // set headers response requested to do so
+        for (const Header &header: mockResponse.headers) {
+            MHD_add_response_header(response, header.key.c_str(), header.value.c_str());
+        }
+        status = mockResponse.status;
+        return response;
+    }
+
+
   private:
     bool isUrl(const std::string &url, const std::string &urlRequired) const {
         return url.compare(0, urlRequired.size(), urlRequired) == 0;

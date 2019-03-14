@@ -14,6 +14,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <microhttpd.h>
 
 
 namespace httpmock {
@@ -114,12 +115,22 @@ class MockServer: public IMockServer {
      * \param urlArguments  Arguments passed in the URL (after ? sign).
      * \param headers   Headers of the HTTP request.
      */
+
+    static int STATUS;
     virtual Response responseHandler(
             const std::string &url,
             const std::string &method,
             const std::string &data,
             const std::vector<UrlArg> &urlArguments = {},
             const std::vector<Header> &headers = {}) = 0;
+
+    virtual struct MHD_Response * responseHandlerCallback(
+            const std::string &url,
+            const std::string &method,
+            const std::string &data,
+            const std::vector<UrlArg> &urlArguments = {},
+            const std::vector<Header> &headers = {},
+            int &status = STATUS) = 0;
 };
 
 
