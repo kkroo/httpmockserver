@@ -29,26 +29,6 @@ class Mock: public httpmock::MockServer {
   public:
     explicit Mock(unsigned port): MockServer(port) {}
 
-    virtual Response responseHandler(
-            const std::string &url,
-            const std::string &/*method*/,
-            const std::string &/*data*/,
-            const std::vector<UrlArg> &urlArguments,
-            const std::vector<Header> &headers) override
-    {
-        if (isUrl(url, "/arg_test")) {
-            return processArgTest(urlArguments);
-        }
-        if (isUrl(url, "/header_in")) {
-            return processHeaderInTest(headers);
-        }
-        if (isUrl(url, "/header_out")) {
-            return processHeaderOutTest();
-        }
-        return Response(404, "Page not found.");
-    }
-
-
     virtual struct MHD_Response * responseHandlerCallback(
             const std::string &url,
             const std::string &method,
@@ -57,8 +37,16 @@ class Mock: public httpmock::MockServer {
             const std::vector<Header> &headersReceived,
             int &status)
     {
-        Response mockResponse = responseHandler(
-                url, method, receivedData, urlArguments, headersReceived);
+        Response mockResponse = Response(404, "Page not found.");
+        if (isUrl(url, "/arg_test")) {
+            mockResponse = processArgTest(urlArguments);
+        }
+        if (isUrl(url, "/header_in")) {
+            mockResponse = processHeaderInTest(headersReceived);
+        }
+        if (isUrl(url, "/header_out")) {
+            mockResponse = processHeaderOutTest();
+        }
         // prepare server response
         struct MHD_Response *response = MHD_create_response_from_buffer(
                 mockResponse.body.size(), (void*) mockResponse.body.data(),

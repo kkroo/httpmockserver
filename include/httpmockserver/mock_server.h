@@ -117,12 +117,6 @@ class MockServer: public IMockServer {
      */
 
     static int STATUS;
-    virtual Response responseHandler(
-            const std::string &url,
-            const std::string &method,
-            const std::string &data,
-            const std::vector<UrlArg> &urlArguments = {},
-            const std::vector<Header> &headers = {}) = 0;
 
     virtual struct MHD_Response * responseHandlerCallback(
             const std::string &url,
