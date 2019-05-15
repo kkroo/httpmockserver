@@ -1,6 +1,7 @@
 include_directories(
     ${HTTPMOCKSERVER_INCLUDE_DIRS}
     ${MHD_INCLUDE_DIRS}
+    ${CURL_INCLUDE_DIR}
 )
 
 add_library(httpmockserver STATIC mock_server.cc)
