@@ -41,6 +41,8 @@ else()
     mockserver_option(USE_SYSTEM_CPR "If ON, CPR library will be searched in system paths." OFF)
     mockserver_option(USE_SYSTEM_GTEST "If ON, GTest library will be searched in system paths." OFF)
 endif()
+mockserver_option(GTEST_ROOT "Path to GTEST including include/gtest/gtest.h" "")
+mockserver_option(GTEST_MSVC_SEARCH "If compiling with MSVC, this variable can be set to \"MD\" or \"MT\" to enable searching a GTest build tree" "MD")
 message(STATUS "=======================================================")
 
 ###
